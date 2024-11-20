@@ -3193,3 +3193,161 @@ details[open] .expander-see-more::before {
   }
 }
 /*# sourceMappingURL=style.css.map */
+
+/* Navbar container */
+.navbar {
+  background-color: #004c86; /* Set background color */
+  padding: 10px 20px; /* Add padding for spacing */
+}
+
+/* Navbar list */
+.navbar__list {
+  display: flex; /* Use flexbox to make items horizontal */
+  justify-content: flex-end; /* Align items to the right */
+  align-items: center; /* Center items vertically */
+  margin: 0; /* Remove default margin */
+  padding: 0; /* Remove default padding */
+  list-style: none; /* Remove bullets */
+  text-decoration: none;
+  color: white;
+}
+
+/* Navbar links */
+.navbar__link {
+  color: #d4b3ff; /* Light purple text color */
+  text-decoration: none; /* Remove underline */
+  margin-left: 20px; /* Add space between links */
+  font-family: Arial, sans-serif; /* Clean font */
+  font-size: 16px; /* Set font size */
+  transition: color 0.3s; /* Smooth hover effect */
+}
+
+/* Hover effect for links */
+.navbar__link:hover {
+  color: #f3e0ff; /* Lighter purple on hover */
+}
+
+/* General Careers Section Styling */
+.careers {
+  padding: 20px;
+  background-color: #f8f9fa; /* Light background */
+  font-family: Arial, sans-serif;
+}
+
+.careers__title {
+  font-size: 2rem;
+  color: #004c86; /* Same color as navbar background */
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Careers List */
+.careers__list {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(300px, 1fr)
+  ); /* Responsive layout */
+}
+
+/* Individual Career Box */
+.career-box {
+  background-color: #ffffff; /* White background */
+  border: 1px solid #ddd; /* Light border */
+  border-radius: 10px; /* Rounded corners */
+  padding: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  transition: transform 0.2s ease;
+}
+
+/* Hover effect for career box */
+.career-box:hover {
+  transform: translateY(-5px); /* Lift on hover */
+}
+
+/* Career Box Elements */
+.career-box__title {
+  font-size: 1.5rem;
+  color: #004c86; /* Primary color */
+  margin-bottom: 10px;
+}
+
+.career-box__description,
+.career-box__pay-rate,
+.career-box__location {
+  font-size: 1rem;
+  color: #333;
+  margin: 5px 0;
+}
+
+/* Apply Button */
+.career-box__apply-btn {
+  background-color: #004c86; /* Primary color */
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.career-box__apply-btn:hover {
+  background-color: #003a64; /* Darker shade on hover */
+}
+
+.careers {
+  padding: 2rem;
+}
+
+.careers__list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.career-box {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  text-align: left;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.career-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.career-box__title {
+  font-size: 1.5rem;
+  color: #004c86;
+  margin-bottom: 0.5rem;
+}
+
+.career-box__description {
+  margin: 0.5rem 0 1rem;
+  font-size: 1rem;
+}
+
+.career-box__pay-rate,
+.career-box__location {
+  font-size: 0.9rem;
+  margin: 0.3rem 0;
+}
+
+.career-box__apply-btn {
+  background-color: #004c86;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.career-box__apply-btn:hover {
+  background-color: #00345d;
+}

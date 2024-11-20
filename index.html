@@ -77,6 +77,7 @@
         style="display: none; visibility: hidden"></iframe
     ></noscript>
     <!-- End Google Tag Manager (noscript) -->
+    <script src="navbar.js"></script>
 
     <script>
       document.body.className = document.body.className + " js-enabled";
@@ -95,7 +96,7 @@
               src="/images/logo.svg"
               alt="Ofsted Logo" />
           </a>
-          <a href="https://discord.gg/SXWVRAaxZd" class="header__logo"
+          <a href="https://discord.gg/fFfnXJz54v" class="header__logo"
             >Join our Discord</a
           >
         </div>
@@ -169,13 +170,49 @@
                       <input
                         type="radio"
                         name="level_1_types"
+                        id="claytonsecondaryschool"
+                        value="0"
+                        checked
+                        aria-labelledby="category"
+                        onclick="navigateToClaytonSecondarySchool()" />
+                      <label for="claytonsecondaryschool"
+                        >Clayton Secondary School</label
+                      >
+                    </div>
+                  </div>
+                  <div
+                    class="form-group"
+                    role="group"
+                    aria-labelledby="category">
+                    <div class="multiple-choice">
+                      <input
+                        type="radio"
+                        name="level_1_types"
                         id="churchillsecondaryschool"
                         value="0"
                         checked
                         aria-labelledby="category"
-                        onclick="navigateToChurchillCommunityCollege()" />
-                      <label for="churchillcommunitycollege"
-                        >Churchill Community College</label
+                        onclick="navigateToChurchillSecondarySchool()" />
+                      <label for="churchillsecondaryschool"
+                        >Churchill Secondary School</label
+                      >
+                    </div>
+                  </div>
+                  <div
+                    class="form-group"
+                    role="group"
+                    aria-labelledby="category">
+                    <div class="multiple-choice">
+                      <input
+                        type="radio"
+                        name="level_1_types"
+                        id="westminstersecondaryschool"
+                        value="0"
+                        checked
+                        aria-labelledby="category"
+                        onclick="navigateToWestminsterSecondarySchool()" />
+                      <label for="westminstersecondaryschool"
+                        >Westminster Secondary School</label
                       >
                     </div>
                   </div>
@@ -195,9 +232,19 @@
             window.location.href = "../provider/28/332345.html";
           }
 
-          function navigateToChurchillCommunityCollege() {
+          function navigateToClaytonSecondarySchool() {
+            // Redirect to the desired location
+            window.location.href = "../provider/28/687322.html";
+          }
+
+          function navigateToChurchillSecondarySchool() {
             // Redirect to the desired location
             window.location.href = "../provider/28/966219.html";
+          }
+
+          function navigateToWestminsterSecondarySchool() {
+            // Redirect to the desired location
+            window.location.href = "../provider/28/864001.html";
           }
         </script>
 
