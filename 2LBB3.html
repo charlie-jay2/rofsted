@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Deputy Chief Inspector Job - Careers</title>
+    <style>
+      /* General Styling */
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f9f9f9;
+        color: #333;
+      }
+
+      header {
+        background-color: rgb(1, 35, 59);
+        color: white;
+        padding: 1rem 0;
+        text-align: center;
+      }
+
+      header h1 {
+        margin: 0;
+        font-size: 2rem;
+      }
+
+      main {
+        padding: 2rem;
+        max-width: 800px;
+        margin: 0 auto;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      h2 {
+        color: #004c86;
+        margin-bottom: 1rem;
+      }
+
+      p {
+        margin: 0.5rem 0 1rem;
+        line-height: 1.6;
+      }
+
+      .job-details {
+        margin-bottom: 2rem;
+      }
+
+      .job-details strong {
+        color: #004c86;
+      }
+
+      .apply-btn {
+        display: inline-block;
+        background-color: #004c86;
+        color: white;
+        padding: 0.7rem 1.5rem;
+        border: none;
+        border-radius: 4px;
+        font-size: 1rem;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background-color 0.2s ease;
+      }
+
+      .apply-btn:hover {
+        background-color: #00345d;
+      }
+
+      .application-form {
+        display: none;
+        margin-top: 2rem;
+      }
+
+      .application-form form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .application-form label {
+        font-weight: bold;
+      }
+
+      .application-form input,
+      .application-form textarea,
+      .application-form button {
+        padding: 0.7rem;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+
+      .application-form button {
+        background-color: #004c86;
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+      }
+
+      .application-form button:hover {
+        background-color: #00345d;
+      }
+
+      footer {
+        text-align: center;
+        padding: 1rem 0;
+        margin-top: 2rem;
+        font-size: 0.9rem;
+        color: #666;
+      }
+
+      .submitted {
+        background-color: #ccc;
+        cursor: not-allowed;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="navbar.js"></script>
+
+    <header>
+      <h1>Deputy Chief Inspector Job</h1>
+    </header>
+    <main>
+      <h2>Job Overview</h2>
+      <p>
+        Join our team as a <strong>Deputy Chief Inspector</strong>. This role
+        involves helping by assisting the Chief Inspector with documents and
+        inspections.
+      </p>
+      <div class="job-details">
+        <p><strong>Pay Rate:</strong> Not Applicable</p>
+        <p><strong>Location:</strong> Remote</p>
+      </div>
+      <button class="apply-btn" onclick="showApplicationForm()">
+        Apply Here
+      </button>
+      <div class="application-form" id="application-form">
+        <h2>Application Form</h2>
+        <form id="job-application-form">
+          <p>Your Discord username</p>
+          <input
+            type="text"
+            id="name"
+            placeholder="Your Discord Name"
+            required />
+          <p>Your email</p>
+          <input type="email" id="email" placeholder="Your Email" required />
+          <p>Resume URL (google docs link etc.)</p>
+          <textarea
+            id="resume"
+            placeholder="Paste Your Resume"
+            required
+            rows="1"
+            cols="1"></textarea>
+          <input
+            type="hidden"
+            id="jobTitle"
+            value="Deputy Chief Inspector
+          " />
+          <p>How can you benefit Ofsted</p>
+          <textarea id="benefit" placeholder="Your Message" required></textarea>
+          <p>What can you do as a Deputy Chief Inspector?</p>
+          <textarea id="doas" placeholder="Your Message" required></textarea>
+          <p>How can you manage investigations</p>
+          <textarea id="manage" placeholder="Your Message" required></textarea>
+          <p>What would you bring to Ofsted?</p>
+          <textarea id="bring" placeholder="Your Message" required></textarea>
+          <button type="submit">Submit Application</button>
+        </form>
+      </div>
+    </main>
+    <footer>&copy; 2024 Careers Page. All Rights Reserved.</footer>
+    <script>
+      function showApplicationForm() {
+        const form = document.getElementById("application-form");
+        form.style.display = "block";
+        window.scrollTo({ top: form.offsetTop, behavior: "smooth" });
+      }
+
+      document
+        .getElementById("job-application-form")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          const name = document.getElementById("name").value;
+          const benefit = document.getElementById("benefit").value;
+          const doas = document.getElementById("doas").value;
+          const bring = document.getElementById("bring").value;
+          const manage = document.getElementById("manage").value;
+          const email = document.getElementById("email").value;
+          const resume = document.getElementById("resume").value;
+          const jobTitle = document.getElementById("jobTitle").value;
+
+          if (!resume.trim()) {
+            alert("Please provide your resume.");
+            return;
+          }
+
+          const payload = {
+            name,
+            email,
+            resume,
+            jobTitle,
+            benefit,
+            doas,
+            manage,
+            bring,
+          };
+
+          const submitButton = document.querySelector(".apply-btn");
+          const formContainer = document.getElementById("application-form");
+
+          try {
+            const response = await fetch("/.netlify/functions/applications", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            });
+
+            if (response.ok) {
+              alert("Application submitted successfully!");
+
+              // Update the Apply Here button
+              submitButton.disabled = true;
+              submitButton.textContent = "Application Submitted";
+              submitButton.classList.add("submitted");
+
+              // Close the form
+              formContainer.style.display = "none";
+            } else {
+              alert("There was an error submitting your application.");
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            alert("There was an error submitting your application.");
+          }
+        });
+    </script>
+  </body>
+</html>

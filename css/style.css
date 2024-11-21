@@ -3201,7 +3201,7 @@ details[open] .expander-see-more::before {
 }
 
 /* Navbar list */
-.navbar__list {
+.navbar-list {
   display: flex; /* Use flexbox to make items horizontal */
   justify-content: flex-end; /* Align items to the right */
   align-items: center; /* Center items vertically */
@@ -3213,7 +3213,7 @@ details[open] .expander-see-more::before {
 }
 
 /* Navbar links */
-.navbar__link {
+.navbar-link {
   color: #d4b3ff; /* Light purple text color */
   text-decoration: none; /* Remove underline */
   margin-left: 20px; /* Add space between links */
@@ -3223,7 +3223,7 @@ details[open] .expander-see-more::before {
 }
 
 /* Hover effect for links */
-.navbar__link:hover {
+.navbar-link:hover {
   color: #f3e0ff; /* Lighter purple on hover */
 }
 
