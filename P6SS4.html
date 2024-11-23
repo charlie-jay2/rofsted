@@ -170,6 +170,23 @@
         background-color: red;
         color: black;
       }
+
+      .ip-info {
+        margin: 20px auto;
+        padding: 10px;
+        width: 90%;
+        background: #e8f4fc;
+        border: 1px solid #004c86;
+        border-radius: 5px;
+        color: #004c86;
+        text-align: center;
+        font-size: 1rem;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      .ip-info span {
+        font-weight: bold;
+      }
     </style>
   </head>
   <body>
@@ -193,6 +210,9 @@
           <!-- Applications will be dynamically inserted here -->
         </tbody>
       </table>
+
+      <!-- IP Data Section -->
+      <div class="ip-info" id="ip-info">Loading your IP information...</div>
     </main>
 
     <!-- View Application Popup -->
@@ -215,6 +235,7 @@
     </div>
 
     <script>
+      // Handle Applications Table and Status
       const table = document.getElementById("applications-table");
       const popup = document.getElementById("popup");
       const deletePopup = document.getElementById("delete-popup");
@@ -300,44 +321,47 @@
             await axios.post("/.netlify/functions/delete-application", {
               email: emailToDelete,
             });
-            emailToDelete = null;
             fetchApplications();
+            emailToDelete = null;
+            closePopups();
           }
-          closeDeletePopup();
         });
 
-      document.getElementById("cancel-delete").addEventListener("click", () => {
-        closeDeletePopup();
-      });
+      document
+        .getElementById("cancel-delete")
+        .addEventListener("click", closePopups);
 
-      function closeDeletePopup() {
+      document
+        .getElementById("close-popup")
+        .addEventListener("click", closePopups);
+
+      overlay.addEventListener("click", closePopups);
+
+      function closePopups() {
+        popup.classList.remove("active");
         deletePopup.classList.remove("active");
         overlay.classList.remove("active");
       }
 
-      async function updateStatus(selectElement, email) {
-        const newStatus = selectElement.value;
+      async function updateStatus(select, email) {
+        const newStatus = select.value;
         await axios.post("/.netlify/functions/update-status", {
           email,
           status: newStatus,
         });
       }
 
-      document.getElementById("close-popup").addEventListener("click", () => {
-        popup.classList.remove("active");
-        overlay.classList.remove("active");
-      });
+      async function fetchIPInfo() {
+        const res = await axios.get("https://api.ipify.org?format=json");
+        const ip = res.data.ip;
+        document.getElementById(
+          "ip-info"
+        ).innerHTML = `Your current IP is: <span>${ip}</span>`;
+      }
 
+      // Initialize
       fetchApplications();
-    </script>
-    <script>
-      window.addEventListener("DOMContentLoaded", async () => {
-        try {
-          await axios.post("/.netlify/functions/collect-data");
-        } catch (error) {
-          console.error("Failed to log data:", error);
-        }
-      });
+      fetchIPInfo();
     </script>
   </body>
 </html>
