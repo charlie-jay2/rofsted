@@ -2,9 +2,3 @@
 from = "/*"
 to = "/404/404.html"
 status = 404
-
-[[redirects]]
-  from = "/*"
-  to = "/.netlify/functions/check-blacklist"
-  status = 200
-  force = true

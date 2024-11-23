@@ -193,9 +193,10 @@
     <script src="navbar.js"></script>
 
     <header class="header">
-      <h1>Admin Panel - Applications</h1>
+      <h1>Admin Panel</h1>
     </header>
     <main>
+      <!-- Applications Table -->
       <table>
         <thead>
           <tr>
@@ -236,34 +237,41 @@
 
     <script>
       // Handle Applications Table and Status
-      const table = document.getElementById("applications-table");
+      const applicationsTable = document.getElementById("applications-table");
+      const inspectionsTable = document.getElementById("inspections-table");
       const popup = document.getElementById("popup");
       const deletePopup = document.getElementById("delete-popup");
       const overlay = document.getElementById("overlay");
       let emailToDelete = null;
 
+      // Get status class for applications
       function getStatusClass(status) {
         switch (status) {
-          case "Accepted":
-            return "accepted";
-          case "Rejected":
-            return "rejected";
+          case "Inadequate":
+            return "Inadequate";
+          case "Requires Improvement":
+            return "Requires Improvement";
+          case "Good":
+            return "Good";
+          case "Outstanding":
+            return "Outstanding";
           case "Not-Read":
           default:
             return "not-read";
         }
       }
 
+      // Fetch applications
       async function fetchApplications() {
         const response = await axios.get(
           "/.netlify/functions/get-applications"
         );
         const applications = response.data;
 
-        table.innerHTML = "";
+        applicationsTable.innerHTML = "";
         applications.forEach((app) => {
           const row = document.createElement("tr");
-          row.innerHTML = `
+          row.innerHTML = ` 
             <td>${app.name}</td>
             <td>${app.email}</td>
             <td>${app.jobTitle}</td>
@@ -274,12 +282,10 @@
                 <option value="Not-Read" ${
                   app.status === "Not-Read" ? "selected" : ""
                 }>Not-Read</option>
-                <option value="Accepted" ${
-                  app.status === "Accepted" ? "selected" : ""
-                }>Accepted</option>
-                <option value="Rejected" ${
-                  app.status === "Rejected" ? "selected" : ""
-                }>Rejected</option>
+                <option value="Inadequate" ${
+                  app.status === "Inadequate" ? "selected" : ""
+                }>Inadequate</option>
+
               </select>
             </td>
             <td>
@@ -289,79 +295,171 @@
               <button onclick='confirmDelete("${app.email}")'>Delete</button>
             </td>
           `;
-          table.appendChild(row);
-
-          const dropdown = row.querySelector("select");
-          dropdown.addEventListener("change", (e) => {
-            dropdown.className = getStatusClass(e.target.value);
-          });
+          applicationsTable.appendChild(row);
         });
       }
 
+      // Fetch inspections
+      async function fetchInspections() {
+        try {
+          const response = await axios.get(
+            "/.netlify/functions/get-inspections"
+          );
+          const inspections = response.data;
+
+          // Clear previous inspections
+          const inspectionsTableBody = document.getElementById(
+            "inspections-table-body"
+          );
+          inspectionsTableBody.innerHTML = "";
+
+          // Populate table with inspections
+          inspections.forEach((inspection) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td>${inspection.discordUsername}</td>
+              <td>${inspection.schoolName}</td>
+              <td>${inspection.sessionTime}</td>
+              <td>${inspection.numMembers}</td>
+              <td>${inspection.inspectionDate}</td>
+              <td><input type="text" id="inspectorName-${inspection.discordUsername}" placeholder="Inspector Name"></td>
+              <td>
+                <select id="inspectionResult-${inspection.discordUsername}">
+                  <option value="Inadequate">Inadequate</option>
+                  <option value="Requires Improvement">Requires Improvement</option>
+                  <option value="Good">Good</option>
+                  <option value="Outstanding">Outstanding</option>
+                </select>
+              </td>
+              <td><input type="text" id="inspectionDocument-${inspection.discordUsername}" placeholder="Inspection Document URL"></td>
+              <td><button onclick="sendInspection('${inspection.discordUsername}')">SEND</button></td>
+            `;
+            inspectionsTableBody.appendChild(row);
+          });
+        } catch (error) {
+          console.error("Error fetching inspections:", error);
+        }
+      }
+
+      // Function to send inspection data
+      async function sendInspection(discordUsername) {
+        const inspectorName = document.getElementById(
+          `inspectorName-${discordUsername}`
+        ).value;
+        const inspectionResult = document.getElementById(
+          `inspectionResult-${discordUsername}`
+        ).value;
+        const inspectionDocument = document.getElementById(
+          `inspectionDocument-${discordUsername}`
+        ).value;
+
+        const inspectionData = {
+          discordUsername: discordUsername,
+          inspectorName: inspectorName,
+          inspectionResult: inspectionResult,
+          inspectionDocument: inspectionDocument,
+        };
+
+        try {
+          // Send data to the Netlify function
+          const response = await axios.post(
+            "/.netlify/functions/inspection-send",
+            inspectionData
+          );
+          if (response.status === 200) {
+            alert("Inspection results sent successfully!");
+          }
+        } catch (error) {
+          console.error("Error sending inspection data:", error);
+          alert("Failed to send inspection data.");
+        }
+      }
+
+      // On page load
+      document.addEventListener("DOMContentLoaded", () => {
+        fetchInspections();
+      });
+
+      // View application details
       function viewApplication(app) {
         document.getElementById("popup-name").textContent = app.name;
         document.getElementById("popup-email").textContent = app.email;
         document.getElementById("popup-job-title").textContent = app.jobTitle;
         document.getElementById("popup-resume").textContent = app.resume;
 
-        popup.classList.add("active");
         overlay.classList.add("active");
+        popup.classList.add("active");
       }
 
+      // Close popup
+      document.getElementById("close-popup").onclick = () => {
+        overlay.classList.remove("active");
+        popup.classList.remove("active");
+      };
+
+      // Confirm delete application
       function confirmDelete(email) {
         emailToDelete = email;
-        deletePopup.classList.add("active");
         overlay.classList.add("active");
+        deletePopup.classList.add("active");
       }
 
-      document
-        .getElementById("confirm-delete")
-        .addEventListener("click", async () => {
-          if (emailToDelete) {
-            await axios.post("/.netlify/functions/delete-application", {
-              email: emailToDelete,
-            });
-            fetchApplications();
-            emailToDelete = null;
-            closePopups();
-          }
-        });
-
-      document
-        .getElementById("cancel-delete")
-        .addEventListener("click", closePopups);
-
-      document
-        .getElementById("close-popup")
-        .addEventListener("click", closePopups);
-
-      overlay.addEventListener("click", closePopups);
-
-      function closePopups() {
-        popup.classList.remove("active");
-        deletePopup.classList.remove("active");
+      // Cancel delete
+      document.getElementById("cancel-delete").onclick = () => {
+        emailToDelete = null;
         overlay.classList.remove("active");
-      }
+        deletePopup.classList.remove("active");
+      };
 
+      // Delete the application
+      document.getElementById("confirm-delete").onclick = async () => {
+        try {
+          await axios.delete(
+            `/.netlify/functions/delete-application?email=${emailToDelete}`
+          );
+          emailToDelete = null;
+          overlay.classList.remove("active");
+          deletePopup.classList.remove("active");
+          fetchApplications(); // Refresh table
+        } catch (error) {
+          console.error("Error deleting application:", error);
+        }
+      };
+
+      // Update status
       async function updateStatus(select, email) {
-        const newStatus = select.value;
-        await axios.post("/.netlify/functions/update-status", {
-          email,
-          status: newStatus,
-        });
+        try {
+          await axios.patch("/.netlify/functions/update-status", {
+            email: email,
+            status: select.value,
+          });
+        } catch (error) {
+          console.error("Error updating status:", error);
+        }
       }
 
+      // Fetch IP information
       async function fetchIPInfo() {
-        const res = await axios.get("https://api.ipify.org?format=json");
-        const ip = res.data.ip;
-        document.getElementById(
-          "ip-info"
-        ).innerHTML = `Your current IP is: <span>${ip}</span>`;
+        try {
+          const response = await axios.get("/.netlify/functions/get-data");
+          document.getElementById("ip-info").innerHTML = `
+            Your IP: <span>${response.data.ip}</span>`;
+        } catch (error) {
+          console.error("Error fetching IP information:", error);
+        }
       }
 
-      // Initialize
-      fetchApplications();
-      fetchIPInfo();
+      // Start inspection
+      function startInspection(inspectionId) {
+        alert(`Starting inspection ${inspectionId}`);
+      }
+
+      // On page load
+      document.addEventListener("DOMContentLoaded", () => {
+        fetchApplications();
+        fetchInspections();
+        fetchIPInfo();
+      });
     </script>
   </body>
 </html>
