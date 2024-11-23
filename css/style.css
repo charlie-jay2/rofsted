@@ -3351,3 +3351,20 @@ details[open] .expander-see-more::before {
 .career-box__apply-btn:hover {
   background-color: #00345d;
 }
+
+.search-bar {
+  width: 70%; /* Adjust the width to make it partially wide */
+  padding: 10px 15px; /* Add padding for better spacing */
+  font-size: 16px; /* Increase the font size for readability */
+  border: 2px solid #000; /* Black outline */
+  border-radius: 12px; /* Rounded edges */
+  margin-top: 10px; /* Space above the search bar */
+  margin-bottom: 20px; /* Space below the search bar */
+  background-color: #fff; /* White background */
+  transition: border-color 0.3s ease; /* Smooth transition for border color on focus */
+}
+
+.search-bar:focus {
+  outline: none; /* Remove default focus outline */
+  border-color: #00345d; /* Green border color on focus */
+}

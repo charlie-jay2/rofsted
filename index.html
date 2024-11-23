@@ -114,6 +114,20 @@
           </div>
         </div>
 
+        <!-- Search bar added above the school options -->
+        <div class="container container--search">
+          <div class="row">
+            <div class="col two-thirds-sm">
+              <input
+                type="text"
+                id="schoolSearch"
+                class="search-bar"
+                placeholder="Search for a school..."
+                oninput="filterSchools()" />
+            </div>
+          </div>
+        </div>
+
         <div class="container container--search">
           <div class="row">
             <div class="col two-thirds-sm">
@@ -218,51 +232,40 @@
             </div>
           </div>
         </div>
+
         <script>
+          function filterSchools() {
+            var searchQuery = document
+              .getElementById("schoolSearch")
+              .value.toLowerCase();
+            var schools = document.querySelectorAll(".multiple-choice");
+
+            schools.forEach(function (school) {
+              var label = school.querySelector("label").innerText.toLowerCase();
+              if (label.includes(searchQuery)) {
+                school.style.display = "block"; // Show matching schools
+              } else {
+                school.style.display = "none"; // Hide non-matching schools
+              }
+            });
+          }
+
           function navigateToRosePrimarySchool() {
-            // Redirect to the desired location
-            window.location.href = "../provider/28/186092.html";
+            window.location.href = "rose-primary-school.html";
           }
-
           function navigateToNorhamSecondarySchool() {
-            // Redirect to the desired location
-            window.location.href = "../provider/28/332345.html";
+            window.location.href = "norham-secondary-school.html";
           }
-
           function navigateToClaytonSecondarySchool() {
-            // Redirect to the desired location
-            window.location.href = "../provider/28/687322.html";
+            window.location.href = "clayton-secondary-school.html";
           }
-
           function navigateToChurchillSecondarySchool() {
-            // Redirect to the desired location
-            window.location.href = "../provider/28/966219.html";
+            window.location.href = "churchill-secondary-school.html";
           }
-
           function navigateToWestminsterSecondarySchool() {
-            // Redirect to the desired location
-            window.location.href = "../provider/28/864001.html";
+            window.location.href = "westminster-secondary-school.html";
           }
         </script>
-
-        <script src="/js/jquery-3.6.3.min.js"></script>
-        <script defer src="/js/ofsted.core.js"></script>
-        <script defer src="/js/ofsted.utils.js"></script>
-        <script defer src="/js/ofsted.showhide.js"></script>
-        <script defer src="/js/ofsted.option-select.js"></script>
-        <script defer src="/js/ofsted.autocomplete.js"></script>
-        <script defer src="/js/ofsted.cookies.js"></script>
-        <script defer src="/js/details.polyfill.js"></script>
-        <script defer src="/js/ofsted.urls.js"></script>
-        <script defer>
-          var showHideContent;
-          $(document).ready(function () {
-            showHideContent = new GOVUK.ShowHideContent();
-            showHideContent.init();
-            GOVUK.details.addDetailsPolyfill();
-          });
-        </script>
-        <script defer src="/js/ofsted.autocomplete.js"></script>
       </main>
     </div>
   </body>
