@@ -1,6 +1,6 @@
-const { MongoClient } = require("mongodb");
 const querystring = require("querystring");
 const fetch = require("node-fetch");
+const { MongoClient } = require("mongodb");
 
 const client = new MongoClient(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
@@ -15,12 +15,9 @@ exports.handler = async (event) => {
     let data;
 
     try {
-        // Parse the incoming JSON body
         if (event.headers["content-type"] === "application/json") {
             data = JSON.parse(event.body);
-        } else if (
-            event.headers["content-type"] === "application/x-www-form-urlencoded"
-        ) {
+        } else if (event.headers["content-type"] === "application/x-www-form-urlencoded") {
             data = querystring.parse(event.body);
         } else {
             throw new Error("Unsupported content type");
@@ -33,16 +30,15 @@ exports.handler = async (event) => {
         };
     }
 
-    const { discordUsername, schoolName, sessionTime, numMembers, inspectionDate } = data;
+    const { discordUsername, email, schoolName, sessionTime, numMembers, inspectionDate } = data;
 
-    if (!discordUsername || !schoolName || !sessionTime || !numMembers || !inspectionDate) {
+    if (!discordUsername || !email || !schoolName || !sessionTime || !numMembers || !inspectionDate) {
         return {
             statusCode: 400,
             body: JSON.stringify({ error: "All fields are required." }),
         };
     }
 
-    // Connect to MongoDB and insert the inspection request
     try {
         await client.connect();
         const database = client.db("Ofsted");
@@ -50,6 +46,7 @@ exports.handler = async (event) => {
 
         const inspectionRequest = {
             discordUsername,
+            email,
             schoolName,
             sessionTime,
             numMembers,
@@ -57,7 +54,6 @@ exports.handler = async (event) => {
             submittedAt: new Date(),
         };
 
-        // Insert the document into the collection
         await collection.insertOne(inspectionRequest);
         console.log("Inspection request saved to the database");
 
@@ -65,13 +61,11 @@ exports.handler = async (event) => {
         console.error("Database error:", error.message);
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: "Failed to save inspection request to the database." }),
+            body: JSON.stringify({ error: "Failed to save inspection request." }),
         };
     }
 
-    // Send the data to Discord webhook
     const webhookURL = process.env.DISCORD_WEBHOOK_URL;
-
     const discordMessage = {
         content: null,
         embeds: [
@@ -79,6 +73,7 @@ exports.handler = async (event) => {
                 title: `New Inspection Request from ${schoolName}`,
                 fields: [
                     { name: "Discord Username", value: discordUsername, inline: false },
+                    { name: "Email", value: email, inline: false },
                     { name: "Ro-School Name", value: schoolName, inline: false },
                     { name: "Preferred Session Time", value: sessionTime, inline: false },
                     { name: "Number of Members", value: numMembers, inline: false },
@@ -90,27 +85,17 @@ exports.handler = async (event) => {
     };
 
     try {
-        const response = await fetch(webhookURL, {
+        await fetch(webhookURL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(discordMessage),
         });
 
-        if (!response.ok) {
-            throw new Error("Failed to send Discord message");
-        }
-
-        return {
-            statusCode: 200,
-            body: JSON.stringify({ message: "Inspection request submitted successfully." }),
-        };
+        return { statusCode: 200, body: JSON.stringify({ message: "Request submitted successfully." }) };
     } catch (error) {
-        console.error("Error sending webhook:", error.message);
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ error: error.message }),
-        };
+        console.error("Webhook error:", error.message);
+        return { statusCode: 500, body: JSON.stringify({ error: "Failed to send Discord message." }) };
     } finally {
-        await client.close(); // Close the MongoDB connection
+        await client.close();
     }
 };

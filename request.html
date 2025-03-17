@@ -105,26 +105,34 @@
             id="discordUsername"
             placeholder="Your Discord Username"
             required />
+
+          <p>Email</p>
+          <input type="email" id="email" placeholder="Your Email" required />
+
           <p>Ro-School Name</p>
           <input
             type="text"
             id="schoolName"
             placeholder="Your Ro-School Name"
             required />
+
           <p>Session Time</p>
           <input
             type="text"
             id="sessionTime"
             placeholder="Preferred Session Time"
             required />
+
           <p>Number of Members</p>
           <input
             type="number"
             id="numMembers"
             placeholder="Number of Members"
             required />
+
           <p>Preferred Inspection Date</p>
           <input type="date" id="inspectionDate" required />
+
           <button type="submit">Submit Request</button>
         </form>
       </div>
@@ -138,6 +146,7 @@
 
           const discordUsername =
             document.getElementById("discordUsername").value;
+          const email = document.getElementById("email").value;
           const schoolName = document.getElementById("schoolName").value;
           const sessionTime = document.getElementById("sessionTime").value;
           const numMembers = document.getElementById("numMembers").value;
@@ -146,6 +155,7 @@
 
           const payload = {
             discordUsername,
+            email,
             schoolName,
             sessionTime,
             numMembers,
