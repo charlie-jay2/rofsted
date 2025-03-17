@@ -17,6 +17,7 @@
   .navbar {
     background-color: #004c86; /* Set background color */
     padding: 10px 20px; /* Add padding for spacing */
+    color: white;
   }
 
   /* Navbar list */
@@ -33,7 +34,7 @@
 
   /* Navbar links */
   .navbar-link {
-    color: #d4b3ff; /* Light purple text color */
+    color: white; /* Always white text color */
     text-decoration: none; /* Remove underline */
     margin-left: 20px; /* Add space between links */
     font-family: Arial, sans-serif; /* Clean font */
@@ -41,8 +42,13 @@
     transition: color 0.3s; /* Smooth hover effect */
   }
 
+  /* Ensure the visited links are also white */
+  .navbar-link:visited {
+    color: white; /* Make visited links white */
+  }
+
   /* Hover effect for links */
   .navbar-link:hover {
-    color: #f3e0ff; /* Lighter purple on hover */
+    color: #ffb3b3; /* Lighter pinkish color for better contrast */
   }
 </style>
