@@ -1,83 +1,55 @@
-const querystring = require("querystring");
-const fetch = require("node-fetch");
-const { MongoClient } = require("mongodb");
-
-const client = new MongoClient(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+const fetch = require('node-fetch');
+const querystring = require('querystring');
 
 exports.handler = async (event) => {
-    if (event.httpMethod !== "POST") {
+    if (event.httpMethod !== 'POST') {
         return {
             statusCode: 405,
-            body: JSON.stringify({ error: "Method not allowed" }),
+            body: JSON.stringify({ error: 'Method not allowed' }),
         };
     }
 
     let data;
 
     try {
-        if (event.headers["content-type"] === "application/json") {
+        if (event.headers['content-type'] === 'application/json') {
             data = JSON.parse(event.body);
-        } else if (event.headers["content-type"] === "application/x-www-form-urlencoded") {
+        } else if (event.headers['content-type'] === 'application/x-www-form-urlencoded') {
             data = querystring.parse(event.body);
         } else {
-            throw new Error("Unsupported content type");
+            throw new Error('Unsupported content type');
         }
     } catch (error) {
-        console.error("Parsing error:", error.message);
+        console.error('Parsing error:', error.message);
         return {
             statusCode: 400,
-            body: JSON.stringify({ error: "Invalid input format." }),
+            body: JSON.stringify({ error: 'Invalid input format.' }),
         };
     }
 
-    const { discordUsername, email, schoolName, sessionTime, numMembers, inspectionDate } = data;
+    const { discordUsername, schoolName, sessionTime, numMembers, inspectionDate, email } = data;
 
-    if (!discordUsername || !email || !schoolName || !sessionTime || !numMembers || !inspectionDate) {
+    if (!discordUsername || !schoolName || !sessionTime || !numMembers || !inspectionDate || !email) {
         return {
             statusCode: 400,
-            body: JSON.stringify({ error: "All fields are required." }),
-        };
-    }
-
-    try {
-        await client.connect();
-        const database = client.db("Ofsted");
-        const collection = database.collection("inspection");
-
-        const inspectionRequest = {
-            discordUsername,
-            email,
-            schoolName,
-            sessionTime,
-            numMembers,
-            inspectionDate,
-            submittedAt: new Date(),
-        };
-
-        await collection.insertOne(inspectionRequest);
-        console.log("Inspection request saved to the database");
-
-    } catch (error) {
-        console.error("Database error:", error.message);
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ error: "Failed to save inspection request." }),
+            body: JSON.stringify({ error: 'All fields are required.' }),
         };
     }
 
     const webhookURL = process.env.DISCORD_WEBHOOK_URL;
+
     const discordMessage = {
         content: null,
         embeds: [
             {
                 title: `New Inspection Request from ${schoolName}`,
                 fields: [
-                    { name: "Discord Username", value: discordUsername, inline: false },
-                    { name: "Email", value: email, inline: false },
-                    { name: "Ro-School Name", value: schoolName, inline: false },
-                    { name: "Preferred Session Time", value: sessionTime, inline: false },
-                    { name: "Number of Members", value: numMembers, inline: false },
-                    { name: "Preferred Inspection Date", value: inspectionDate, inline: false },
+                    { name: 'Discord Username', value: discordUsername, inline: false },
+                    { name: 'Ro-School Name', value: schoolName, inline: false },
+                    { name: 'Preferred Session Time', value: sessionTime, inline: false },
+                    { name: 'Number of Members', value: numMembers, inline: false },
+                    { name: 'Preferred Inspection Date', value: inspectionDate, inline: false },
+                    { name: 'Email', value: email, inline: false },
                 ],
                 color: 5814783,
             },
@@ -85,17 +57,25 @@ exports.handler = async (event) => {
     };
 
     try {
-        await fetch(webhookURL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
+        const response = await fetch(webhookURL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(discordMessage),
         });
 
-        return { statusCode: 200, body: JSON.stringify({ message: "Request submitted successfully." }) };
+        if (!response.ok) {
+            throw new Error(`Failed to send Discord message: ${response.statusText}`);
+        }
+
+        return {
+            statusCode: 200,
+            body: JSON.stringify({ message: 'Inspection request submitted successfully.' }),
+        };
     } catch (error) {
-        console.error("Webhook error:", error.message);
-        return { statusCode: 500, body: JSON.stringify({ error: "Failed to send Discord message." }) };
-    } finally {
-        await client.close();
+        console.error('Error sending webhook:', error.message);
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ error: error.message }),
+        };
     }
 };
