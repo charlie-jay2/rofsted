@@ -70,7 +70,7 @@ exports.handler = async (event) => {
     }
 
     // Send the data to Discord webhook
-    const webhookURL = process.env.DISCORD_WEBHOOK_URL2;
+    const webhookURL = process.env.DISCORD_WEBHOOK_URL;
 
     const discordMessage = {
         content: null,
