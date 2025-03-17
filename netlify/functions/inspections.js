@@ -36,7 +36,7 @@ exports.handler = async (event) => {
         };
     }
 
-    const webhookURL = process.env.DISCORD_WEBHOOK_URL;
+    const webhookURL = process.env.DISCORD_WEBHOOK_URL2;
 
     const discordMessage = {
         content: null,
