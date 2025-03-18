@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Directory Listing</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+      ul {
+        list-style-type: none;
+      }
+      li {
+        margin-left: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Directory Listing</h2>
+    <ul id="file-list"></ul>
+
+    <script>
+      async function fetchDirectory() {
+        try {
+          const response = await fetch("/.netlify/functions/listFiles");
+          const data = await response.json();
+
+          function createList(items, parent) {
+            let ul = document.createElement("ul");
+            parent.appendChild(ul);
+            items.forEach((item) => {
+              let li = document.createElement("li");
+              li.textContent = item.name;
+              ul.appendChild(li);
+              if (item.type === "folder") createList(item.children, li);
+            });
+          }
+
+          createList(data, document.getElementById("file-list"));
+        } catch (error) {
+          console.error("Error fetching directory contents", error);
+        }
+      }
+
+      fetchDirectory();
+    </script>
+  </body>
+</html>
