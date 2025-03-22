@@ -2,6 +2,7 @@ const express = require("express");
 const nodemailer = require("nodemailer");
 const fetch = require("node-fetch");
 const querystring = require("querystring");
+const serverless = require("serverless-http");
 require("dotenv").config();
 
 const app = express();
@@ -12,8 +13,8 @@ app.use(express.urlencoded({ extended: true }));
 const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-        user: process.env.EMAIL_USERNAME,
-        pass: process.env.EMAIL_PASSWORD,
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
     },
 });
 
@@ -25,7 +26,6 @@ app.post("/submit-application", async (req, res) => {
     let data;
 
     try {
-        // Handle different content types
         if (req.headers["content-type"] === "application/json") {
             data = req.body;
         } else if (req.headers["content-type"] === "application/x-www-form-urlencoded") {
@@ -95,7 +95,7 @@ app.post("/submit-application", async (req, res) => {
 
     // Configure Email Options
     const mailOptions = {
-        from: `"Ofsted Roblox" <${process.env.EMAIL_USERNAME}>`,
+        from: `"Ofsted Roblox" <${process.env.EMAIL_USER}>`,
         to: email,
         subject: `Application Received for ${jobTitle}`,
         html: emailHTML,
@@ -123,5 +123,5 @@ app.post("/submit-application", async (req, res) => {
     }
 });
 
-// Start the Express Server
-app.listen(8888, () => console.log("Server running on port 8888"));
+// Netlify requires an exported handler function
+module.exports.handler = serverless(app);
